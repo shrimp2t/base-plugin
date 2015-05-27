@@ -7,5 +7,5 @@
  */
 
 function test(){
-    echo 'dasda';
+    echo 'function test called';
 }

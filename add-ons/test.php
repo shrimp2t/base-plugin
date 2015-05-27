@@ -7,7 +7,7 @@
  */
 
 if( function_exists('test') ){
-    test();
+  //  test();
 }else{
-    echo 'no';
+  //  echo 'no';
 }
