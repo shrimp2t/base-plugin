@@ -18,14 +18,18 @@ final class  SA_Plugin{
      */
     public $version = '1.0';
 
-    public static $url =  BASE_URL;
-    public static  $path =  BASE_PATH;
+    public static $url = BASE_URL ;
+    public static $path  = BASE_PATH ;
     protected static $_instance = null;
 
     /**
      *  Constructor.
      */
     public function __construct() {
+        if( ! $this->url || $this->url =='' ){
+            $this->url = BASE_URL;
+            $this->path = BASE_PATH;
+        }
         $this->includes();
         $this->load_add_ons();
         $this->load_text_domain();
@@ -42,14 +46,23 @@ final class  SA_Plugin{
 
     public function load_add_ons(){
         //$add_ons = array('test.php');
-        include_once $this->path.'add-ons/test.php';
+        //include_once $this->path.'add-ons/test.php';
     }
 
     public function includes(){
         include_once $this->path.'includes/class-helper.php';
+        include_once $this->path.'includes/class-add-ons.php';
 
         // load admin settings
         if( is_admin() ){
+            $admin_config = apply_filters('SA_Plugin_admin_config_file', $this->path.'config/admin-config.php');
+            //die( $admin_config );
+            if( is_file( $admin_config ) ){
+                include_once $admin_config;
+            }else{
+
+            }
+
             include_once $this->path.'includes/class-admin.php';
         }
     }

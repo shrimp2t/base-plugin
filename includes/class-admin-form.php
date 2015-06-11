@@ -57,6 +57,11 @@ class SA_Admin_Form{
         if( $this->msg ){
             echo $this->msg;
         }
+
+        if( empty( $this->fields ) ){
+            return;
+        }
+
         ?>
         <table class="form-table">
             <?php foreach(  $this->fields as $field ){ ?>
@@ -75,9 +80,16 @@ class SA_Admin_Form{
                     case 'select':
                         $this->select( $field );
                         break;
+                    case 'editor':
+                        $this->editor( $field );
+                        break;
                     default:
                         $this->text($field);
                 }
+                /**
+                 * hook you can add any custom field you want.
+                 */
+                do_action('sa_admin_form_field',  $field, $this );
                 ?>
             </tr>
             <?php } ?>
@@ -202,7 +214,7 @@ class SA_Admin_Form{
             unset(  $new_v );
             $name .='[]';
         }
-        
+
         $id = uniqid('text-');
         ?>
         <th scope="row"><label for="<?php echo $id; ?>"><?php echo wp_kses( $setting['title'] , $this->allow_tags ); ?></label></th>
@@ -252,6 +264,34 @@ class SA_Admin_Form{
             <?php } ?>
         </td>
         <?php
+    }
+
+    function editor( $setting  ){
+        $setting = wp_parse_args( $setting, array(
+            'type'=>'',
+            'name' =>'',
+            'placeholder' =>'',
+            'title'=>'',
+            'default' => '',
+            'desc' =>''
+        ) );
+
+        if(  $setting['name'] != '' ){
+            $value =  $this->get_val( $setting['name'] );
+        }else{
+            $value = '';
+        }
+
+        $id = uniqid('text-');
+        ?>
+        <th scope="row"><label for="<?php echo $id; ?>"><?php echo wp_kses( $setting['title'] , $this->allow_tags ); ?></label></th>
+        <td>
+            <?php wp_editor( $value , $setting['name'] ); ?>
+            <?php if( !empty( $setting['desc'] ) ){ ?>
+                <p class="description"><?php echo wp_kses( $setting['desc'] , $this->allow_tags );?></p>
+            <?php } ?>
+        </td>
+    <?php
     }
 
     function textarea( $setting  ){
